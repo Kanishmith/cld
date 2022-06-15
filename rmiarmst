@@ -1,0 +1,77 @@
+Server.java
+
+import java.rmi.*;
+import java.rmi.registry.*;
+public class MyServer{
+public static void main(String args[]){
+try{
+Armstronger stub=new ArmstrongRemote();
+Naming.rebind("rmi://localhost:5000/kanish",stub);
+}catch(Exception e){System.out.println(e);}
+}
+}
+
+Client.java
+
+import java.rmi.*;
+import java.util.*;
+public class MyClient{
+public static void main(String args[]){
+Scanner sc = new Scanner(System.in);
+try{
+Armstronger stub=(Armstronger)Naming.lookup("rmi://localhost:5000/kanish");
+System.out.print("Enter the number: ");
+long start = System.nanoTime();
+int n = sc.nextInt();
+boolean ans = stub.arms(n);
+if(ans){
+System.out.println("It is an Armstrong Number!!!!");
+}else{
+System.out.println("It is not an Armstrong Number!!!");
+}
+long end = System.nanoTime();
+// execution time
+long execution = end - start;
+System.out.println("Execution time: " + execution + " nanoseconds");
+}catch(Exception e){System.out.println(e);}
+}
+}
+
+Armstrong remote.java
+
+import java.rmi.*;
+import java.rmi.server.*;
+
+public class ArmstrongRemote extends UnicastRemoteObject implements Armstronger{
+ArmstrongRemote()throws RemoteException{
+super();
+}
+public boolean arms(int n)
+{
+int temp, digits=0, last=0, sum=0;
+//assigning n into a temp variable
+temp=n;
+//loop execute until the condition becomes false
+while(temp>0)
+{
+int temp1 = temp%10;
+sum += Math.pow(temp1,3);
+temp/=10;
+//digits++;
+}
+//compares the sum with n
+if(n==sum)
+//returns if sum and n are equal
+return true;
+//returns false if sum and n are not equal
+else return false;
+}
+}
+
+Armstrong.java
+
+import java.rmi.*;
+public interface Armstronger extends Remote{
+
+public boolean arms(int x)throws RemoteException;
+}
